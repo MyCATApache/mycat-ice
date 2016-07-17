@@ -1,0 +1,48 @@
+<icegrid>
+	<application name="MyApp">
+		<properties id="props">
+			<property name="Ice.ThreadPool.Server.Size" value="50" />
+			<property name="Ice.ThreadPool.Client.Size" value="10" />
+			<property name="Ice.Default.LocatorCacheTimeout" value="300" />
+			<property name="Ice.BackgroundLocatorCacheUpdates" value="1" />
+		</properties>
+		<properties id="LoadJarProps">
+			<property name="LoadJarsFromRemote.Enabled" value="true"/>
+			<property name="LoadJarsFromRemote.Site" value="http://localhost:8080/ice-app-lib"></property>
+			<property name="LoadJarsFromRemote.SharedJars" value="iceclient.properties"></property>
+			<property name="LoadJarsFromRemote.AutoUpdate" value="true"></property>
+		</properties>
+		<server-template id="MyHelloServerTemplate">
+			<parameter name="id" />
+			<icebox id="MyHelloServer${id}" exe="java" activation="on-demand">
+				<properties>
+					<properties refid="props" />
+				</properties>
+				<option>io.mycat.ice.server.Sl4jIceBoxServer</option>
+				<env>CLASSPATH=C:\ZeroC\Ice-3.6.1\lib\*;C:\project\Ice_8\bin;C:\project\Ice_8\starter-lib\*</env>
+				<service name="MyService" entry="io.mycat.ice.server.GenIceBoxService">
+				<properties>
+					<properties refid="LoadJarProps" />
+					<property name="servantClassName" value="com.my.demo.MyServiceImpl" />
+					<property name="myjars" value="helloservice" />
+					<property name="jdbc_url" value="jdbc://mysql:localhost" />
+					
+				</properties>
+					<adapter name="MyService" id="MyService${id}" endpoints="default"
+						replica-group="MyServiceRep">
+					</adapter>
+				</service>
+			</icebox>
+		</server-template>
+		<replica-group id="MyServiceRep">
+			<load-balancing type="round-robin" n-replicas="0" />
+			<object identity="MyService" type="::demo::MyService" />
+		</replica-group>
+		<node name="node1">
+			<server-instance template="MyHelloServerTemplate" id="1" />
+		</node>
+		<node name="node2">
+
+		</node>
+	</application>
+</icegrid>
