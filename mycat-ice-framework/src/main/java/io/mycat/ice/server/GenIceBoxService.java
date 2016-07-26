@@ -28,9 +28,9 @@ public class GenIceBoxService implements Service {
 		final String PREX = "LoadJarsFromRemote";
 		Map<String, String> map = communicator.getProperties().getPropertiesForPrefix(PREX);
 		if (map != null && !map.isEmpty()) {
-			loadJars = map.getOrDefault(PREX + ".Enabled", "false");
-			jarSite = map.getOrDefault(PREX + ".Site", null);
-			sharedJarNames = map.getOrDefault(PREX + ".SharedJars", null);
+			loadJars = map.get(PREX + ".Enabled");
+			jarSite = map.get(PREX + ".Site");
+			sharedJarNames = map.get(PREX + ".SharedJars");
 			myJars=communicator.getProperties().getProperty("myjars");
 			if(sharedJarNames!=null && !sharedJarNames.trim().isEmpty())
 			{
