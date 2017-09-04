@@ -1,13 +1,15 @@
 package io.mycat.ice.server;
 
-import IceBox.Server;
+import com.zeroc.Ice.InitializationData;
+import com.zeroc.Ice.Util;
+import com.zeroc.IceBox.Server;
 
 public class Sl4jIceBoxServer {
 
 	public static void main(String[] args)
 	{
-		  Ice.InitializationData initData = new Ice.InitializationData();
-	        initData.properties = Ice.Util.createProperties();
+		  InitializationData initData = new InitializationData();
+	        initData.properties =Util.createProperties();
 	        initData.properties.setProperty("Ice.Admin.DelayCreation", "1");
 	        initData.logger=new Sl4jLogerI("system");
 

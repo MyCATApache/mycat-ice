@@ -1,14 +1,17 @@
 package io.mycat.ice.utils;
 
-import Ice.ObjectPrx;
+import com.zeroc.Ice.ObjectPrx;
+import com.zeroc.Ice.Util;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
+import com.zeroc.Ice.Communicator;
+
 public class ICEClientUtil {
-    private static volatile Ice.Communicator ic = null;
+    private static volatile Communicator ic = null;
     @SuppressWarnings("rawtypes")
-    private static Map<Class, ObjectPrx> cls2PrxMap = new HashMap<Class, ObjectPrx>();
+    private static Map<Class, ObjectPrx> cls2PrxMap = new HashMap<>();
     // 独立在Grid之外启动的Servant的Endpoint地址
     private static Map<String, String> standAloneServiceEndptMap = new HashMap<String, String>();
     private static volatile long lastAccessTimestamp;
@@ -17,7 +20,7 @@ public class ICEClientUtil {
     private static String iceLocator = null;
     private static final String locatorKey = "--Ice.Default.Locator";
 
-    public static Ice.Communicator getICECommunictor() {
+    public static Communicator getICECommunictor() {
         if (ic == null) {
             synchronized (ICEClientUtil.class) {
                 if (ic == null) {
@@ -35,7 +38,7 @@ public class ICEClientUtil {
                     // String[] initParams = new String[] { locatorKey + "="
                     // + iceLocator };
 
-                    ic = Ice.Util.initialize(initParams);
+                    ic = Util.initialize(initParams);
                     createMonitorThread();
                 }
             }
@@ -100,20 +103,20 @@ public class ICEClientUtil {
      * @return ObjectPrx
      */
     @SuppressWarnings("rawtypes")
-    public static ObjectPrx getSerivcePrx(Ice.Communicator communicator, Class serviceCls) {
+    public static ObjectPrx getSerivcePrx(Communicator communicator, Class serviceCls) {
         return createIceProxy(communicator, serviceCls);
 
     }
 
     @SuppressWarnings("rawtypes")
-    private static ObjectPrx createIceProxy(Ice.Communicator communicator, Class serviceCls) {
+    private static ObjectPrx createIceProxy(Communicator communicator, Class serviceCls) {
         String serviceName = serviceCls.getSimpleName();
         int pos = serviceName.lastIndexOf("Prx");
         if (pos <= 0) {
             throw new java.lang.IllegalArgumentException("Invalid ObjectPrx class ,class name must end with Prx");
         }
         String realSvName = serviceName.substring(0, pos);
-        Ice.ObjectPrx base = null;
+        ObjectPrx base = null;
         // 检查是否是在Grid之外单独启动的Servant
         String localEndp = standAloneServiceEndptMap.get(realSvName);
         if (localEndp != null) {
@@ -125,14 +128,11 @@ public class ICEClientUtil {
     }
 
     @SuppressWarnings("rawtypes")
-    private static Ice.ObjectPrx createObjectPrxFromEndpoint(Ice.Communicator communicator, Ice.ObjectPrx base,
+    private static ObjectPrx createObjectPrxFromEndpoint(Communicator communicator, com.zeroc.Ice.ObjectPrx base,
                                                              Class serviceCls) {
         try {
-            String clsName = serviceCls.getName();
-
-            ObjectPrx proxy = (ObjectPrx) Class.forName(clsName + "Helper").newInstance();
-            Method m1 = proxy.getClass().getDeclaredMethod("uncheckedCast", ObjectPrx.class);
-            proxy = (ObjectPrx) m1.invoke(proxy, base);
+            Method m1 = serviceCls.getDeclaredMethod("uncheckedCast", ObjectPrx.class);
+            ObjectPrx proxy = (ObjectPrx) m1.invoke(serviceCls, base);
             return proxy;
         } catch (Exception e) {
             e.printStackTrace();

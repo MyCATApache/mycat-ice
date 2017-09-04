@@ -4,11 +4,11 @@ import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
-import Ice.Communicator;
-import Ice.Identity;
-import Ice.ObjectAdapter;
-import IceBox.Service;
-
+import com.zeroc.Ice.Communicator;
+import com.zeroc.Ice.Identity;
+import com.zeroc.Ice.ObjectAdapter;
+import com.zeroc.Ice.Util;
+import com.zeroc.IceBox.Service;
 public class GenIceBoxService implements Service {
 
 	protected ObjectAdapter _adapter;
@@ -53,13 +53,13 @@ public class GenIceBoxService implements Service {
 		serviceInfo.setName(name);
 		serviceInfo.setService(this);
 
-		Ice.Util.setProcessLogger(iceLogger);
+		com.zeroc.Ice.Util.setProcessLogger(iceLogger);
 
 		// 创建objectAdapter，这里和service同名
 		_adapter = communicator.createObjectAdapter(name);
-		id = communicator.stringToIdentity(name);
+		id = Util.stringToIdentity(name);
 
-		Ice.Object object = null;
+		com.zeroc.Ice.Object object = null;
 		if (isLoadJar) {
 			logger.info("load jars from remote for service " + name);
 			if (serviceCtrl == null) {
@@ -67,11 +67,11 @@ public class GenIceBoxService implements Service {
 					serviceCtrl = new ServiceController(jarSite);
 				}
 			}
-			object = (Ice.Object) serviceCtrl.loadService(name, serviceInfo);
+			object =  (com.zeroc.Ice.Object) serviceCtrl.loadService(name, serviceInfo);
 		} else {
 			logger.info("load jars from local for service " + name);
 			try {
-				object = (Ice.Object) Class.forName(servantClassName).newInstance();
+				object = (com.zeroc.Ice.Object) Class.forName(servantClassName).newInstance();
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				logger.error(e.getMessage(), e);
 			}

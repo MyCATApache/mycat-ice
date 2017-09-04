@@ -5,8 +5,8 @@ package io.mycat.ice.server;
  */
 import java.io.Serializable;
 
-import Ice.Communicator;
-import IceBox.Service;
+import com.zeroc.Ice.Communicator;
+import com.zeroc.IceBox.Service;
 
 public class ServiceInfo implements Serializable {
 	/**

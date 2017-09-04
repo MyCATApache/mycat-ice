@@ -1,12 +1,14 @@
 package demo;
 
-import Ice.Current;
-import Ice.ObjectAdapter;
-import com.my.demo._MyServiceDisp;
-import io.mycat.ice.server.ServantLifcycle;
 import org.slf4j.LoggerFactory;
 
-public class MyServiceImpl extends _MyServiceDisp implements ServantLifcycle {
+import com.my.demo.MyService;
+import com.zeroc.Ice.Current;
+import com.zeroc.Ice.ObjectAdapter;
+
+import io.mycat.ice.server.ServantLifcycle;
+
+public class MyServiceImpl implements MyService,ServantLifcycle {
     /**
      *
      */
@@ -14,10 +16,9 @@ public class MyServiceImpl extends _MyServiceDisp implements ServantLifcycle {
     private static org.slf4j.Logger logger = LoggerFactory.getLogger(MyServiceImpl.class);
 
     @Override
-    public String hellow(Current __current) {
-
-        return "Hello world";
-    }
+	public String hellow(Current current) {
+		return "Hello world";
+	}
 
     @Override
     public void init(ObjectAdapter adapter) {
@@ -30,5 +31,7 @@ public class MyServiceImpl extends _MyServiceDisp implements ServantLifcycle {
     public void destroy() {
         logger.info("close jdbc pool ");
     }
+
+	
 
 }

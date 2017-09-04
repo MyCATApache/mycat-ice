@@ -2,5 +2,6 @@
 module demo{
 interface MyService{
 string hellow();
+
 };
 };

@@ -1,6 +1,6 @@
 package io.mycat.ice.server;
 
-import Ice.ObjectAdapter;
+import com.zeroc.Ice.ObjectAdapter;
 
 /**
  * Servant生命周期接口

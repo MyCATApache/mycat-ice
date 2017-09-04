@@ -2,9 +2,9 @@ package io.mycat.ice.server;
 
 import org.slf4j.LoggerFactory;
 
-import Ice.Logger;
+import com.zeroc.Ice.Logger;
 
-public class Sl4jLogerI implements Ice.Logger {
+public class Sl4jLogerI implements com.zeroc.Ice.Logger {
 	private final org.slf4j.Logger logger;
 
 	public Sl4jLogerI(String loggerName) {
