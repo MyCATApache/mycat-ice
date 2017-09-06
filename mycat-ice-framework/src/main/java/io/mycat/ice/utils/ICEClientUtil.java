@@ -102,14 +102,13 @@ public class ICEClientUtil {
      * @param serviceCls
      * @return ObjectPrx
      */
-    @SuppressWarnings("rawtypes")
-    public static ObjectPrx getSerivcePrx(Communicator communicator, Class serviceCls) {
+	public static <T extends ObjectPrx> T getSerivcePrx(Communicator communicator, Class<T> serviceCls) {
         return createIceProxy(communicator, serviceCls);
 
     }
 
-    @SuppressWarnings("rawtypes")
-    private static ObjectPrx createIceProxy(Communicator communicator, Class serviceCls) {
+
+    private static <T extends ObjectPrx> T createIceProxy(Communicator communicator, Class<T> serviceCls) {
         String serviceName = serviceCls.getSimpleName();
         int pos = serviceName.lastIndexOf("Prx");
         if (pos <= 0) {
@@ -126,13 +125,13 @@ public class ICEClientUtil {
         }
         return createObjectPrxFromEndpoint(communicator, base, serviceCls);
     }
-
-    @SuppressWarnings("rawtypes")
-    private static ObjectPrx createObjectPrxFromEndpoint(Communicator communicator, com.zeroc.Ice.ObjectPrx base,
-                                                             Class serviceCls) {
+    
+    @SuppressWarnings("unchecked")
+	private static <T extends ObjectPrx> T  createObjectPrxFromEndpoint(Communicator communicator, com.zeroc.Ice.ObjectPrx base,
+                                                             Class<T> serviceCls) {
         try {
             Method m1 = serviceCls.getDeclaredMethod("uncheckedCast", ObjectPrx.class);
-            ObjectPrx proxy = (ObjectPrx) m1.invoke(serviceCls, base);
+			T proxy = (T) m1.invoke(serviceCls, base);
             return proxy;
         } catch (Exception e) {
             e.printStackTrace();
@@ -140,15 +139,16 @@ public class ICEClientUtil {
         }
     }
 
+
     /**
      * 用于客户端API获取ICE服务实例的场景
      *
      * @param serviceCls
      * @return ObjectPrx
      */
-    @SuppressWarnings("rawtypes")
-    public static ObjectPrx getSerivcePrx(Class serviceCls) {
-        ObjectPrx proxy = cls2PrxMap.get(serviceCls);
+    @SuppressWarnings("unchecked")
+	public static <T extends ObjectPrx> T getSerivcePrx(Class<T> serviceCls) {
+        T proxy = (T)cls2PrxMap.get(serviceCls);
         if (proxy != null) {
             lastAccessTimestamp = System.currentTimeMillis();
             return proxy;
@@ -159,7 +159,9 @@ public class ICEClientUtil {
         lastAccessTimestamp = System.currentTimeMillis();
         return proxy;
     }
-
+    
+    
+    
     static class MonitorThread extends Thread {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
